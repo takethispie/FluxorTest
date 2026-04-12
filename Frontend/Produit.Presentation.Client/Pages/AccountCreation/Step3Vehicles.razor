@@ -1,0 +1,125 @@
+@page "/account-creation/step3"
+@inherits FluxorComponent
+@inject IState<UserAccountState> AccountState
+@inject IDispatcher Dispatcher
+@inject NavigationManager Nav
+@using Produit.Presentation.Client.Store.UserAccount
+
+<PageTitle>Account Creation – Step 3</PageTitle>
+<h2 class="mb-1">Create Account</h2>
+<AccountCreationBreadcrumb CurrentStep="3"
+    Step1Valid="AccountState.Value.Step1Valid"
+    Step2Valid="AccountState.Value.Step2Valid"
+    Step3Valid="AccountState.Value.Step3Valid" />
+
+@if (!AccountState.Value.IsSubmitted)
+{
+    <div class="card mb-4" style="max-width: 640px;">
+        <div class="card-body">
+            <h5 class="card-title">Add a Vehicle</h5>
+            <div class="row g-3 mb-3">
+                <div class="col-sm-6">
+                    <label class="form-label">Make *</label>
+                    <input class="form-control" @bind="_make" placeholder="e.g. Toyota" />
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Model *</label>
+                    <input class="form-control" @bind="_model" placeholder="e.g. Corolla" />
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">Year</label>
+                    <input type="number" class="form-control" @bind="_year" min="1900" max="@DateTime.Today.Year" />
+                </div>
+                <div class="col-sm-6">
+                    <label class="form-label">License Plate</label>
+                    <input class="form-control" @bind="_plate" placeholder="e.g. AB-123-CD" />
+                </div>
+            </div>
+            <button class="btn btn-success"
+                    @onclick="Add"
+                    disabled="@(string.IsNullOrWhiteSpace(_make) || string.IsNullOrWhiteSpace(_model))">
+                + Add
+            </button>
+        </div>
+    </div>
+
+    @if (AccountState.Value.Vehicles.Count > 0)
+    {
+        <ul class="list-group mb-4" style="max-width: 640px;">
+            @foreach (var v in AccountState.Value.Vehicles)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>
+                        <strong>@v.Year @v.Make @v.Model</strong>
+                        @if (!string.IsNullOrWhiteSpace(v.LicensePlate))
+                        { <span class="badge bg-secondary ms-2">@v.LicensePlate</span> }
+                    </span>
+                    <button class="btn btn-sm btn-outline-danger" @onclick="() => Dispatcher.Dispatch(new RemoveVehicleAction(v.Id))">✕</button>
+                </li>
+            }
+        </ul>
+    }
+
+    <div class="d-flex gap-2 mb-3" style="max-width: 640px;">
+        <button class="btn btn-primary" @onclick="Validate" disabled="@(AccountState.Value.Vehicles.Count == 0)">Validate</button>
+        <button class="btn btn-outline-secondary" @onclick="Save">Save</button>
+    </div>
+
+    <hr style="max-width: 640px;" />
+
+    <div class="d-flex align-items-center gap-3" style="max-width: 640px;">
+        <button class="btn btn-success" @onclick="FinalizeCreation" disabled="@(!AllValid)">✓ Finalize</button>
+        @if (!AllValid)
+        {
+            <span class="text-danger small">All steps must be validated before finalizing.</span>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-success" style="max-width: 640px;">
+        <h4 class="alert-heading">🎉 Account Created!</h4>
+        <p>Welcome, <strong>@AccountState.Value.UserInfo.FirstName @AccountState.Value.UserInfo.LastName</strong>!</p>
+        <p class="mb-0">@AccountState.Value.Hobbies.Count hobby(ies) · @AccountState.Value.Vehicles.Count vehicle(s)</p>
+        <hr />
+        <button class="btn btn-outline-success" @onclick="Reset">Start Over</button>
+    </div>
+}
+
+@code {
+    private string _make  = string.Empty;
+    private string _model = string.Empty;
+    private int    _year  = DateTime.Today.Year;
+    private string _plate = string.Empty;
+
+    private bool AllValid => AccountState.Value.Step1Valid
+                          && AccountState.Value.Step2Valid
+                          && AccountState.Value.Step3Valid;
+
+    private UserAccountModel BuildModel() => new()
+    {
+        Id = AccountState.Value.Id,
+        UserInfo = AccountState.Value.UserInfo,
+        Hobbies = AccountState.Value.Hobbies,
+        Vehicles = AccountState.Value.Vehicles
+    };
+
+    private void Add()
+    {
+        if (string.IsNullOrWhiteSpace(_make) || string.IsNullOrWhiteSpace(_model)) return;
+        Dispatcher.Dispatch(new AddVehicleAction(new Vehicle { Id = Guid.NewGuid(), Make = _make, Model = _model, Year = _year, LicensePlate = _plate }));
+        _make = string.Empty; _model = string.Empty; _year = DateTime.Today.Year; _plate = string.Empty;
+    }
+
+    private void Validate() => Dispatcher.Dispatch(new ValidateStep3Action());
+
+    private void Save() => Dispatcher.Dispatch(new SaveAccountAction(BuildModel()));
+
+    private void FinalizeCreation() => Dispatcher.Dispatch(new FinalizeAccountAction(BuildModel()));
+
+    private void Reset()
+    {
+        Dispatcher.Dispatch(new ResetAccountAction());
+        Nav.NavigateTo("/account-creation/step1");
+    }
+}

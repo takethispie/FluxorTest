@@ -1,0 +1,71 @@
+@page "/accounts"
+@inherits FluxorComponent
+@inject IState<UserAccountsState> State
+@inject IDispatcher Dispatcher
+@inject NavigationManager Nav
+@using Produit.Presentation.Client.Store.UserAccounts
+@using Produit.Presentation.Client.Store.UserAccount
+
+<PageTitle>User Accounts</PageTitle>
+<h2 class="mb-3">User Accounts</h2>
+
+<div class="d-flex gap-2 mb-3">
+    <button class="btn btn-primary" @onclick="() => Dispatcher.Dispatch(new FetchAccountsAction())" disabled="@State.Value.IsLoading">
+        @(State.Value.IsLoading ? "Loading…" : "↻ Refresh")
+    </button>
+    <button class="btn btn-success" @onclick="NewAccount">+ New Account</button>
+</div>
+
+@if (!string.IsNullOrEmpty(State.Value.Error))
+{
+    <div class="alert alert-danger">@State.Value.Error</div>
+}
+
+@if (State.Value.Accounts.Count == 0 && !State.Value.IsLoading)
+{
+    <p class="text-muted">No accounts. Click Refresh to load.</p>
+}
+else
+{
+    <table class="table table-hover" style="max-width: 860px;">
+        <thead>
+            <tr><th>Name</th><th>Email</th><th>Hobbies</th><th>Vehicles</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var a in State.Value.Accounts)
+            {
+                <tr>
+                    <td>@a.UserInfo.FirstName @a.UserInfo.LastName</td>
+                    <td>@a.UserInfo.Email</td>
+                    <td>@a.Hobbies.Count</td>
+                    <td>@a.Vehicles.Count</td>
+                    <td>@(a.EstBrouillon ? "En Brouillon" : "Validé")</td>
+                    <td class="d-flex gap-1">
+                        <button class="btn btn-sm btn-outline-primary" @onclick="() => Edit(a)">Edit</button>
+                        <button class="btn btn-sm btn-outline-danger" @onclick="() => Dispatcher.Dispatch(new DeleteAccountAction(a.Id))">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        Dispatcher.Dispatch(new FetchAccountsAction());
+    }
+
+    private void NewAccount()
+    {
+        Dispatcher.Dispatch(new ResetAccountAction());
+        Nav.NavigateTo("/account-creation/step1");
+    }
+
+    private void Edit(UserAccountModel account)
+    {
+        Dispatcher.Dispatch(new LoadAccountForEditAction(account));
+        Nav.NavigateTo("/account-creation/step1");
+    }
+}
