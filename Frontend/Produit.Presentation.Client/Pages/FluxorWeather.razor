@@ -1,6 +1,7 @@
 @page "/fluxor-weather"
 @inherits FluxorComponent
-
+@inject IState<WeatherState> WeatherStoreState
+@inject IDispatcher Dispatcher
 @using Produit.Presentation.Client.Store.Weather
 
 <PageTitle>Fluxor Weather</PageTitle>
@@ -72,8 +73,6 @@ else
 </ol>
 
 @code {
-    [Inject] private IState<WeatherState> WeatherStoreState { get; set; } = default!;
-    [Inject] private IDispatcher Dispatcher { get; set; } = default!;
 
     private bool IsLoading => WeatherStoreState.Value.IsLoading;
     private string? ErrorMessage => WeatherStoreState.Value.ErrorMessage;

@@ -58,7 +58,8 @@
     {
         if (string.IsNullOrWhiteSpace(_name)) return;
         Dispatcher.Dispatch(new AddHobbyAction(new Hobby { Id = Guid.NewGuid(), Name = _name, Description = _desc }));
-        _name = string.Empty; _desc = string.Empty;
+        _name = string.Empty; 
+        _desc = string.Empty;
     }
 
     private void Save() => Dispatcher.Dispatch(new SaveAccountAction(new UserAccountModel
