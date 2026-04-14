@@ -3,6 +3,7 @@
 @inject IState<UserAccountState> AccountState
 @inject IDispatcher Dispatcher
 @inject NavigationManager Nav
+@using Produit.Presentation.Client.Models
 @using Produit.Presentation.Client.Store.UserAccount
 
 <PageTitle>Account Creation – Step 1</PageTitle>
@@ -55,7 +56,9 @@
     {
         base.OnInitialized();
         var s = AccountState.Value.UserInfo;
-        _firstName = s.FirstName; _lastName = s.LastName; _email = s.Email;
+        _firstName = s.FirstName; 
+        _lastName = s.LastName; 
+        _email = s.Email;
         _birthDate = s.BirthDate == default ? DateOnly.FromDateTime(DateTime.Today.AddYears(-18)) : s.BirthDate;
     }
 
@@ -64,19 +67,11 @@
     private void Save()
     {
         _showError = AccountState.Value.Step1Valid;
-        var info = BuildInfo();
-        Dispatcher.Dispatch(new SaveUserInfoAction(info));
-        Dispatcher.Dispatch(new SaveAccountAction(new UserAccountModel
-        {
-            Id = AccountState.Value.Id,
-            UserInfo = info,
-            Hobbies = AccountState.Value.Hobbies,
-            Vehicles = AccountState.Value.Vehicles
-        }));
+        Dispatcher.Dispatch(new SaveUserInfoAction(BuildInfo()));
     }
 
     private void Validate()
     {
-        Dispatcher.Dispatch(new ValidateStep1Action(_firstName, _lastName, _email));
+        Dispatcher.Dispatch(new ValidateUserInfoAction(_firstName, _lastName, _email));
     }
 }

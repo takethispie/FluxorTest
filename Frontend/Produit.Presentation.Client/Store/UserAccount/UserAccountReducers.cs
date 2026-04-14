@@ -22,13 +22,13 @@ public static class UserAccountReducers
     public static UserAccountState OnSaveUserInfo(UserAccountState s, SaveUserInfoAction a) =>
         s with { UserInfo = a.UserInfo };
 
-    [ReducerMethod(typeof(ValidateStep1Action))]
-    public static UserAccountState OnValidateStep1(UserAccountState s) =>
+    [ReducerMethod(typeof(ValidateUserInfoAction))]
+    public static UserAccountState OnValidateUserInfo(UserAccountState s, ValidateUserInfoAction a) =>
         s with
         {
-            Step1Valid = !string.IsNullOrWhiteSpace(s.UserInfo.FirstName)
-                      && !string.IsNullOrWhiteSpace(s.UserInfo.LastName)
-                      && !string.IsNullOrWhiteSpace(s.UserInfo.Email)
+            Step1Valid = !string.IsNullOrWhiteSpace(a.FirstName)
+                      && !string.IsNullOrWhiteSpace(a.LastName)
+                      && !string.IsNullOrWhiteSpace(a.Email)
         };
 
     [ReducerMethod]
@@ -40,10 +40,10 @@ public static class UserAccountReducers
         s with { Hobbies = s.Hobbies.Where(h => h.Id != a.HobbyId).ToList() };
 
     [ReducerMethod(typeof(SaveHobbiesAction))]
-    public static UserAccountState OnSaveStep2(UserAccountState s) => s;
+    public static UserAccountState OnSaveHobbies(UserAccountState s) => s;
 
     [ReducerMethod(typeof(ValidateHobbiesAction))]
-    public static UserAccountState OnValidateStep2(UserAccountState s) =>
+    public static UserAccountState OnValidateHobbies(UserAccountState s) =>
         s with { Step2Valid = s.Hobbies.Count > 0 };
 
     [ReducerMethod]
@@ -55,15 +55,16 @@ public static class UserAccountReducers
         s with { Vehicles = s.Vehicles.Where(v => v.Id != a.VehicleId).ToList() };
 
     [ReducerMethod(typeof(ValidateVehiclesAction))]
-    public static UserAccountState OnValidateStep3(UserAccountState s) =>
+    public static UserAccountState OnValidateVehicles(UserAccountState s) =>
         s with { Step3Valid = s.Vehicles.Count > 0 };
 
     [ReducerMethod(typeof(FinalizeAccountAction))]
     public static UserAccountState OnFinalize(UserAccountState s) =>
         s with { IsSubmitted = true };
 
-    [ReducerMethod(typeof(SaveAccountAction))]
-    public static UserAccountState OnSaveAccount(UserAccountState s) => s;
+    [ReducerMethod]
+    public static UserAccountState OnSaveAccount(UserAccountState s, SaveAccountAction action) =>
+    s with { Hobbies = action.Account.Hobbies, Vehicles = action.Account.Vehicles, UserInfo =  s.UserInfo };
 
     [ReducerMethod(typeof(ResetAccountAction))]
     public static UserAccountState OnReset(UserAccountState _) => new();

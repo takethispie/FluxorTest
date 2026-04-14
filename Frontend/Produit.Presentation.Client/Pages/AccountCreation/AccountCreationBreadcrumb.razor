@@ -36,6 +36,7 @@
         new(1, "Personal Info",  "/account-creation/step1"),
         new(2, "Hobbies",        "/account-creation/step2"),
         new(3, "Vehicles",       "/account-creation/step3"),
+        new(4, "Summary",        "/account-creation/step4"),
     ];
 
     private bool IsValid(StepInfo step) => step.Step switch
@@ -43,6 +44,7 @@
         1 => Step1Valid,
         2 => Step2Valid,
         3 => Step3Valid,
+        4 => Step1Valid && Step2Valid && Step3Valid,
         _ => false
     };
 

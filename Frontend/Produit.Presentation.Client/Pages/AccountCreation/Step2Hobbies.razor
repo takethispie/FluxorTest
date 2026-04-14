@@ -3,6 +3,7 @@
 @inject IState<UserAccountState> AccountState
 @inject IDispatcher Dispatcher
 @inject NavigationManager Nav
+@using Produit.Presentation.Client.Models
 @using Produit.Presentation.Client.Store.UserAccount
 
 <PageTitle>Account Creation – Step 2</PageTitle>
@@ -52,7 +53,7 @@
 @code {
     private string _name = string.Empty;
     private string _desc = string.Empty;
-    private bool _showError;
+    private bool _showError => AccountState.Value.Hobbies.Count == 0;
 
     private void Add()
     {
@@ -62,17 +63,7 @@
         _desc = string.Empty;
     }
 
-    private void Save() => Dispatcher.Dispatch(new SaveAccountAction(new UserAccountModel
-    {
-        Id = AccountState.Value.Id,
-        UserInfo = AccountState.Value.UserInfo,
-        Hobbies = AccountState.Value.Hobbies,
-        Vehicles = AccountState.Value.Vehicles
-    }));
+    private void Save() => Dispatcher.Dispatch(new SaveHobbiesAction());
 
-    private void Validate()
-    {
-        Dispatcher.Dispatch(new ValidateStep2Action());
-        _showError = AccountState.Value.Hobbies.Count == 0;
-    }
+    private void Validate() => Dispatcher.Dispatch(new ValidateHobbiesAction());
 }

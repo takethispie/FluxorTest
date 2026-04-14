@@ -1,4 +1,5 @@
 using Fluxor;
+using Produit.Presentation.Client.Models;
 using Produit.Presentation.Client.Services;
 
 namespace Produit.Presentation.Client.Store.UserAccount;
@@ -8,14 +9,15 @@ public class UserAccountEffects(FakeAccountDatabase db)
     [EffectMethod]
     public Task HandleSave(SaveAccountAction action, IDispatcher _)
     {
-        db.Upsert(action.Account);
-        return Task.CompletedTask;
+        return Upsert(action.Account);
     }
 
     [EffectMethod]
-    public Task HandleFinalize(FinalizeAccountAction action, IDispatcher _)
+    public Task HandleFinalize(FinalizeAccountAction action, IDispatcher _) => Upsert(action.Account);
+
+    private Task Upsert(UserAccountModel account)
     {
-        db.Upsert(action.Account);
+        db.Upsert(account);
         return Task.CompletedTask;
     }
 }

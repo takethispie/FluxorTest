@@ -1,0 +1,135 @@
+@page "/account-creation/step4"
+@inherits FluxorComponent
+@inject IState<UserAccountState> AccountState
+@inject IDispatcher Dispatcher
+@inject NavigationManager Nav
+@using Produit.Presentation.Client.Models
+@using Produit.Presentation.Client.Store.UserAccount
+
+<PageTitle>Account Creation – Step 4</PageTitle>
+<h2 class="mb-1">Create Account</h2>
+<AccountCreationBreadcrumb CurrentStep="4"
+    Step1Valid="AccountState.Value.Step1Valid"
+    Step2Valid="AccountState.Value.Step2Valid"
+    Step3Valid="AccountState.Value.Step3Valid" />
+
+@if (!AccountState.Value.IsSubmitted)
+{
+    <div style="max-width: 640px;">
+        <h5 class="mb-3">Review your information</h5>
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Personal Info</strong>
+                @if (AccountState.Value.Step1Valid)
+                { <span class="badge bg-success">✓ Validated</span> }
+                else
+                { <span class="badge bg-warning text-dark">Not validated</span> }
+            </div>
+            <div class="card-body">
+                <dl class="row mb-0">
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">@AccountState.Value.UserInfo.FirstName @AccountState.Value.UserInfo.LastName</dd>
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">@AccountState.Value.UserInfo.Email</dd>
+                    <dt class="col-sm-4">Birth Date</dt>
+                    <dd class="col-sm-8">@AccountState.Value.UserInfo.BirthDate.ToString("yyyy-MM-dd")</dd>
+                </dl>
+            </div>
+        </div>
+
+        <div class="card mb-3">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Hobbies (@AccountState.Value.Hobbies.Count)</strong>
+                @if (AccountState.Value.Step2Valid)
+                { <span class="badge bg-success">✓ Validated</span> }
+                else
+                { <span class="badge bg-warning text-dark">Not validated</span> }
+            </div>
+            @if (AccountState.Value.Hobbies.Count > 0)
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var h in AccountState.Value.Hobbies)
+                    {
+                        <li class="list-group-item">
+                            <strong>@h.Name</strong>
+                            @if (!string.IsNullOrWhiteSpace(h.Description))
+                            { <span class="text-muted"> — @h.Description</span> }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="card-body text-muted">No hobbies added.</div>
+            }
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <strong>Vehicles (@AccountState.Value.Vehicles.Count)</strong>
+                @if (AccountState.Value.Step3Valid)
+                { <span class="badge bg-success">✓ Validated</span> }
+                else
+                { <span class="badge bg-warning text-dark">Not validated</span> }
+            </div>
+            @if (AccountState.Value.Vehicles.Count > 0)
+            {
+                <ul class="list-group list-group-flush">
+                    @foreach (var v in AccountState.Value.Vehicles)
+                    {
+                        <li class="list-group-item">
+                            <strong>@v.Year @v.Make @v.Model</strong>
+                            @if (!string.IsNullOrWhiteSpace(v.LicensePlate))
+                            { <span class="badge bg-secondary ms-2">@v.LicensePlate</span> }
+                        </li>
+                    }
+                </ul>
+            }
+            else
+            {
+                <div class="card-body text-muted">No vehicles added.</div>
+            }
+        </div>
+
+        <div class="d-flex align-items-center gap-3">
+            <button class="btn btn-success" @onclick="FinalizeCreation" disabled="@(!AllValid)">✓ Finalize</button>
+            @if (!AllValid)
+            {
+                <span class="text-danger small">All steps must be validated before finalizing.</span>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-success" style="max-width: 640px;">
+        <h4 class="alert-heading">🎉 Account Created!</h4>
+        <p>Welcome, <strong>@AccountState.Value.UserInfo.FirstName @AccountState.Value.UserInfo.LastName</strong>!</p>
+        <p class="mb-0">@AccountState.Value.Hobbies.Count hobby(ies) · @AccountState.Value.Vehicles.Count vehicle(s)</p>
+        <hr />
+        <button class="btn btn-outline-success" @onclick="Reset">Start Over</button>
+    </div>
+}
+
+@code {
+    private bool AllValid => AccountState.Value.Step1Valid
+                          && AccountState.Value.Step2Valid
+                          && AccountState.Value.Step3Valid;
+
+    private UserAccountModel BuildModel() => new()
+    {
+        Id = AccountState.Value.Id,
+        UserInfo = AccountState.Value.UserInfo,
+        Hobbies = AccountState.Value.Hobbies,
+        Vehicles = AccountState.Value.Vehicles
+    };
+
+    private void FinalizeCreation() => Dispatcher.Dispatch(new FinalizeAccountAction(BuildModel()));
+
+    private void Reset()
+    {
+        Dispatcher.Dispatch(new ResetAccountAction());
+        Nav.NavigateTo("/account-creation/step1");
+    }
+}

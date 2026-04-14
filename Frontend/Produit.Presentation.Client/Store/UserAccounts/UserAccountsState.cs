@@ -1,5 +1,5 @@
 using Fluxor;
-using Produit.Presentation.Client.Store.UserAccount;
+using Produit.Presentation.Client.Models;
 
 namespace Produit.Presentation.Client.Store.UserAccounts;
 

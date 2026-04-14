@@ -1,4 +1,4 @@
-namespace Produit.Presentation.Client.Store.UserAccount;
+namespace Produit.Presentation.Client.Models;
 
 public class UserInfo
 {
