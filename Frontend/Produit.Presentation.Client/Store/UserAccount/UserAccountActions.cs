@@ -7,13 +7,14 @@ public record ValidateStep1Action(string FirstName, string LastName, string Emai
 // Step 2
 public record AddHobbyAction(Hobby Hobby);
 public record RemoveHobbyAction(Guid HobbyId);
-public record SaveStep2Action();
-public record ValidateStep2Action();
+public record SaveHobbiesAction();
+public record ValidateHobbiesAction();
 
 // Step 3
 public record AddVehicleAction(Vehicle Vehicle);
 public record RemoveVehicleAction(Guid VehicleId);
-public record ValidateStep3Action();
+public record SaveVehiclesAction();
+public record ValidateVehiclesAction();
 
 // Global
 public record LoadAccountForEditAction(UserAccountModel Account);

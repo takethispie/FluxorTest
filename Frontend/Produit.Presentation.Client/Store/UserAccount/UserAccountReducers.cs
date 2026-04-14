@@ -39,10 +39,10 @@ public static class UserAccountReducers
     public static UserAccountState OnRemoveHobby(UserAccountState s, RemoveHobbyAction a) =>
         s with { Hobbies = s.Hobbies.Where(h => h.Id != a.HobbyId).ToList() };
 
-    [ReducerMethod(typeof(SaveStep2Action))]
+    [ReducerMethod(typeof(SaveHobbiesAction))]
     public static UserAccountState OnSaveStep2(UserAccountState s) => s;
 
-    [ReducerMethod(typeof(ValidateStep2Action))]
+    [ReducerMethod(typeof(ValidateHobbiesAction))]
     public static UserAccountState OnValidateStep2(UserAccountState s) =>
         s with { Step2Valid = s.Hobbies.Count > 0 };
 
@@ -54,7 +54,7 @@ public static class UserAccountReducers
     public static UserAccountState OnRemoveVehicle(UserAccountState s, RemoveVehicleAction a) =>
         s with { Vehicles = s.Vehicles.Where(v => v.Id != a.VehicleId).ToList() };
 
-    [ReducerMethod(typeof(ValidateStep3Action))]
+    [ReducerMethod(typeof(ValidateVehiclesAction))]
     public static UserAccountState OnValidateStep3(UserAccountState s) =>
         s with { Step3Valid = s.Vehicles.Count > 0 };
 
