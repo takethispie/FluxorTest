@@ -108,7 +108,10 @@ else
     {
         if (string.IsNullOrWhiteSpace(_make) || string.IsNullOrWhiteSpace(_model)) return;
         Dispatcher.Dispatch(new AddVehicleAction(new Vehicle { Id = Guid.NewGuid(), Make = _make, Model = _model, Year = _year, LicensePlate = _plate }));
-        _make = string.Empty; _model = string.Empty; _year = DateTime.Today.Year; _plate = string.Empty;
+        _make = string.Empty; 
+        _model = string.Empty; 
+        _year = DateTime.Today.Year; 
+        _plate = string.Empty;
     }
 
     private void Validate() => Dispatcher.Dispatch(new ValidateStep3Action());

@@ -1,0 +1,6 @@
+@startuml
+class "Offre Commerciale" {
+  +Sauvegarder()
+  +Valider()
+}
+@enduml

@@ -1,5 +1,6 @@
 using Fluxor;
 using System.Net.Http.Json;
+using Produit.Presentation.Client.Models.Weather;
 
 namespace Produit.Presentation.Client.Store.Weather;
 

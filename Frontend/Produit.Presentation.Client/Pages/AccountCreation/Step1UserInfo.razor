@@ -63,7 +63,7 @@
 
     private void Save()
     {
-        _showError = false;
+        _showError = AccountState.Value.Step1Valid;
         var info = BuildInfo();
         Dispatcher.Dispatch(new SaveUserInfoAction(info));
         Dispatcher.Dispatch(new SaveAccountAction(new UserAccountModel
@@ -77,10 +77,6 @@
 
     private void Validate()
     {
-        Dispatcher.Dispatch(new ValidateStep1Action());
-        var valid = !string.IsNullOrWhiteSpace(_firstName)
-                 && !string.IsNullOrWhiteSpace(_lastName)
-                 && !string.IsNullOrWhiteSpace(_email);
-        _showError = !valid;
+        Dispatcher.Dispatch(new ValidateStep1Action(_firstName, _lastName, _email));
     }
 }

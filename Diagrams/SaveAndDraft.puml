@@ -1,0 +1,19 @@
+@startuml Draft and Save
+package "Frontend" {
+    [Brouillon]
+    [Valide]
+}
+node backend {
+    [OffreCommercialeController]
+}
+database Postgre {
+    frame "Offre Commerciale" {
+        [OffreCommerciale]
+        [OffreCommercialeBrouillon]
+    }
+}
+[OffreCommercialeController] -> [OffreCommerciale]
+[OffreCommercialeController] -> [OffreCommercialeBrouillon]
+[Brouillon] --> [OffreCommercialeController] : Save
+[Valide] --> [OffreCommercialeController] : Validate + Save
+@enduml

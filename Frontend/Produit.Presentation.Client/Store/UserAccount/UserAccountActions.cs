@@ -2,7 +2,7 @@ namespace Produit.Presentation.Client.Store.UserAccount;
 
 // Step 1
 public record SaveUserInfoAction(UserInfo UserInfo);
-public record ValidateStep1Action();
+public record ValidateStep1Action(string FirstName, string LastName, string Email);
 
 // Step 2
 public record AddHobbyAction(Hobby Hobby);
