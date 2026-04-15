@@ -5,7 +5,7 @@ namespace Produit.Presentation.Client.Store.UserAccount;
 public static class UserAccountReducers
 {
     [ReducerMethod]
-    public static UserAccountState OnLoadForEdit(UserAccountState s, LoadAccountForEditAction a) =>
+    public static UserAccountState LoadForEdit(UserAccountState s, LoadAccountForEditAction a) =>
         s with
         {
             Id = a.Account.Id,
@@ -19,10 +19,10 @@ public static class UserAccountReducers
         };
 
     [ReducerMethod]
-    public static UserAccountState OnSaveUserInfo(UserAccountState _, SaveUserInfoAction a) => a.NewAccountState;
+    public static UserAccountState SaveUserInfo(UserAccountState _, SaveUserInfoAction a) => a.NewAccountState;
 
     [ReducerMethod]
-    public static UserAccountState OnValidateUserInfo(UserAccountState s, ValidateUserInfoAction a) =>
+    public static UserAccountState ValidateUserInfo(UserAccountState s, ValidateUserInfoAction a) =>
         s with
         {
             Step1Valid = !string.IsNullOrWhiteSpace(a.FirstName)
@@ -31,31 +31,44 @@ public static class UserAccountReducers
         };
 
     [ReducerMethod]
-    public static UserAccountState OnAddHobby(UserAccountState s, AddHobbyAction a) =>
+    public static UserAccountState AddHobby(UserAccountState s, AddHobbyAction a) =>
         s with { Hobbies = [..s.Hobbies, a.Hobby] };
 
     [ReducerMethod]
-    public static UserAccountState OnRemoveHobby(UserAccountState s, RemoveHobbyAction a) =>
+    public static UserAccountState RemoveHobby(UserAccountState s, RemoveHobbyAction a) =>
         s with { Hobbies = s.Hobbies.Where(h => h.Id != a.HobbyId).ToList() };
 
     [ReducerMethod(typeof(SaveHobbiesAction))]
-    public static UserAccountState OnSaveHobbies(UserAccountState s) => s;
+    public static UserAccountState SaveHobbies(UserAccountState s) => s;
 
     [ReducerMethod(typeof(ValidateHobbiesAction))]
-    public static UserAccountState OnValidateHobbies(UserAccountState s) =>
-        s with { Step2Valid = s.Hobbies.Count > 0 };
+    public static UserAccountState ValidateHobbies(UserAccountState s) =>
+        s with {
+            Step2Valid = s.Hobbies.Count > 0 && s.Hobbies.All(
+                hobby => !string.IsNullOrEmpty(hobby.Name)
+                && hobby.Name.Length > 3
+            )
+        };
 
     [ReducerMethod]
-    public static UserAccountState OnAddVehicle(UserAccountState s, AddVehicleAction a) =>
+    public static UserAccountState AddVehicle(UserAccountState s, AddVehicleAction a) =>
         s with { Vehicles = [..s.Vehicles, a.Vehicle] };
 
     [ReducerMethod]
-    public static UserAccountState OnRemoveVehicle(UserAccountState s, RemoveVehicleAction a) =>
+    public static UserAccountState RemoveVehicle(UserAccountState s, RemoveVehicleAction a) =>
         s with { Vehicles = s.Vehicles.Where(v => v.Id != a.VehicleId).ToList() };
 
     [ReducerMethod(typeof(ValidateVehiclesAction))]
-    public static UserAccountState OnValidateVehicles(UserAccountState s) =>
-        s with { Step3Valid = s.Vehicles.Count > 0 };
+    public static UserAccountState ValidateVehicles(UserAccountState s) =>
+        s with {
+            Step3Valid = s.Vehicles.Count > 0 && s.Vehicles.All(
+                ve => !string.IsNullOrEmpty(ve.LicensePlate)
+                &&  !string.IsNullOrWhiteSpace(ve.Make)
+                && !string.IsNullOrWhiteSpace(ve.Model)
+                && ve.LicensePlate.Length > 7
+                && ve.Model.Length >= 2
+            )
+        };
 
     [ReducerMethod(typeof(FinalizeAccountAction))]
     public static UserAccountState OnFinalize(UserAccountState s) =>
