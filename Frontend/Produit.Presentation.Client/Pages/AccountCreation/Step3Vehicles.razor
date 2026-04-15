@@ -90,5 +90,5 @@
 
     private void Validate() => Dispatcher.Dispatch(new ValidateVehiclesAction());
 
-    private void Save() => Dispatcher.Dispatch(new SaveVehiclesAction());
+    private void Save() => Dispatcher.Dispatch(new SaveVehiclesAction(AccountState.Value.ToUserAccountModel()));
 }

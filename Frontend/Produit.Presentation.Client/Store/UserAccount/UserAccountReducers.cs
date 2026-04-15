@@ -19,10 +19,9 @@ public static class UserAccountReducers
         };
 
     [ReducerMethod]
-    public static UserAccountState OnSaveUserInfo(UserAccountState s, SaveUserInfoAction a) =>
-        s with { UserInfo = a.UserInfo };
+    public static UserAccountState OnSaveUserInfo(UserAccountState _, SaveUserInfoAction a) => a.NewAccountState;
 
-    [ReducerMethod(typeof(ValidateUserInfoAction))]
+    [ReducerMethod]
     public static UserAccountState OnValidateUserInfo(UserAccountState s, ValidateUserInfoAction a) =>
         s with
         {
@@ -60,11 +59,11 @@ public static class UserAccountReducers
 
     [ReducerMethod(typeof(FinalizeAccountAction))]
     public static UserAccountState OnFinalize(UserAccountState s) =>
-        s with { IsSubmitted = true };
+        s with { IsSubmitted = true  };
 
     [ReducerMethod]
     public static UserAccountState OnSaveAccount(UserAccountState s, SaveAccountAction action) =>
-    s with { Hobbies = action.Account.Hobbies, Vehicles = action.Account.Vehicles, UserInfo =  s.UserInfo };
+        s with { Hobbies = action.Account.Hobbies, Vehicles = action.Account.Vehicles, UserInfo =  s.UserInfo };
 
     [ReducerMethod(typeof(ResetAccountAction))]
     public static UserAccountState OnReset(UserAccountState _) => new();

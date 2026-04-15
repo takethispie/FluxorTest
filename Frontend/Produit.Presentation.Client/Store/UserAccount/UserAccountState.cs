@@ -16,4 +16,12 @@ public record UserAccountState
     public bool IsSubmitted { get; init; } = false;
 
     public UserAccountState() { }
+
+    public UserAccountModel ToUserAccountModel() => new UserAccountModel() {
+        Id = Id,
+        UserInfo = UserInfo,
+        Hobbies = Hobbies,
+        Vehicles = Vehicles,
+        EstBrouillon = !Step1Valid || !Step2Valid || !Step3Valid
+    };
 }

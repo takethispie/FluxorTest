@@ -67,7 +67,7 @@
     private void Save()
     {
         _showError = AccountState.Value.Step1Valid;
-        Dispatcher.Dispatch(new SaveUserInfoAction(BuildInfo()));
+        Dispatcher.Dispatch(new SaveUserInfoAction(AccountState.Value with { UserInfo = BuildInfo() }));
     }
 
     private void Validate()

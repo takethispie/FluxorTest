@@ -63,7 +63,7 @@
         _desc = string.Empty;
     }
 
-    private void Save() => Dispatcher.Dispatch(new SaveHobbiesAction());
+    private void Save() => Dispatcher.Dispatch(new SaveHobbiesAction(AccountState.Value.ToUserAccountModel()));
 
     private void Validate() => Dispatcher.Dispatch(new ValidateHobbiesAction());
 }

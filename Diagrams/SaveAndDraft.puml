@@ -1,7 +1,9 @@
 @startuml Draft and Save
 package "Frontend" {
-    [Brouillon]
-    [Valide]
+    node "UI OffreCommerciale" {
+        [Brouillon]
+        [Valide]
+    }
 }
 node backend {
     [OffreCommercialeController]
