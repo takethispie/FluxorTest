@@ -1,0 +1,108 @@
+@inherits LayoutComponentBase
+@inject NavigationManager Nav
+@inject FakeAccountDatabase Db
+@using Produit.Presentation.Client.Models
+@using Produit.Presentation.Client.Services
+
+<CascadingValue Value="this">
+    @Body
+</CascadingValue>
+
+@code {
+    // ── Wizard state ─────────────────────────────────────────────────────────
+    public Guid Id { get; private set; } = Guid.NewGuid();
+    public UserInfo UserInfo { get; private set; } = new();
+    public List<Hobby> Hobbies { get; private set; } = [];
+    public List<Vehicle> Vehicles { get; private set; } = [];
+
+    public bool Step1Valid { get; private set; }
+    public bool Step2Valid { get; private set; }
+    public bool Step3Valid { get; private set; }
+    public bool IsSubmitted { get; private set; }
+
+    // ── Step 1 ───────────────────────────────────────────────────────────────
+    public void SaveUserInfo(UserInfo info)
+    {
+        UserInfo = info;
+        StateHasChanged();
+    }
+
+    public bool ValidateUserInfo(string firstName, string lastName, string email)
+    {
+        Step1Valid = !string.IsNullOrWhiteSpace(firstName)
+                  && !string.IsNullOrWhiteSpace(lastName)
+                  && !string.IsNullOrWhiteSpace(email);
+        StateHasChanged();
+        if (Step1Valid) Nav.NavigateTo("/no-fluxor/step2");
+        return Step1Valid;
+    }
+
+    // ── Step 2 ───────────────────────────────────────────────────────────────
+    public void AddHobby(Hobby hobby)
+    {
+        Hobbies = [.. Hobbies, hobby];
+        StateHasChanged();
+    }
+
+    public void RemoveHobby(Guid id)
+    {
+        Hobbies = Hobbies.Where(h => h.Id != id).ToList();
+        StateHasChanged();
+    }
+
+    public bool ValidateHobbies()
+    {
+        Step2Valid = Hobbies.Count > 0;
+        StateHasChanged();
+        if (Step2Valid) Nav.NavigateTo("/no-fluxor/step3");
+        return Step2Valid;
+    }
+
+    // ── Step 3 ───────────────────────────────────────────────────────────────
+    public void AddVehicle(Vehicle vehicle)
+    {
+        Vehicles = [.. Vehicles, vehicle];
+        StateHasChanged();
+    }
+
+    public void RemoveVehicle(Guid id)
+    {
+        Vehicles = Vehicles.Where(v => v.Id != id).ToList();
+        StateHasChanged();
+    }
+
+    public bool ValidateVehicles()
+    {
+        Step3Valid = Vehicles.Count > 0;
+        StateHasChanged();
+        return Step3Valid;
+    }
+
+    // ── Step 4 ───────────────────────────────────────────────────────────────
+    public void SubmitAccount()
+    {
+        Db.Upsert(new UserAccountModel
+        {
+            Id = Id,
+            UserInfo = UserInfo,
+            Hobbies = Hobbies,
+            Vehicles = Vehicles
+        });
+        IsSubmitted = true;
+        StateHasChanged();
+    }
+
+    public void Reset()
+    {
+        Id = Guid.NewGuid();
+        UserInfo = new();
+        Hobbies = [];
+        Vehicles = [];
+        Step1Valid = false;
+        Step2Valid = false;
+        Step3Valid = false;
+        IsSubmitted = false;
+        StateHasChanged();
+        Nav.NavigateTo("/no-fluxor/step1");
+    }
+}

@@ -1,0 +1,69 @@
+@page "/no-fluxor/step2"
+@layout WizardLayout
+@using Produit.Presentation.Client.Models
+@using Produit.Presentation.Client.Pages.AccountCreationNoFluxor
+
+<PageTitle>Account Creation (No Fluxor) – Step 2</PageTitle>
+<h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
+<AccountCreationBreadcrumb CurrentStep="2"
+    Step1Valid="Wizard.Step1Valid"
+    Step2Valid="Wizard.Step2Valid"
+    Step3Valid="Wizard.Step3Valid" />
+
+<div class="card mb-4" style="max-width: 600px;">
+    <div class="card-body">
+        <h5 class="card-title">Add a Hobby</h5>
+        <div class="mb-3">
+            <label class="form-label">Name *</label>
+            <input class="form-control" @bind="_name" placeholder="e.g. Photography" />
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <input class="form-control" @bind="_desc" placeholder="Short description..." />
+        </div>
+        <button class="btn btn-success" @onclick="Add" disabled="@string.IsNullOrWhiteSpace(_name)">+ Add</button>
+    </div>
+</div>
+
+@if (Wizard.Hobbies.Count > 0)
+{
+    <ul class="list-group mb-4" style="max-width: 600px;">
+        @foreach (var h in Wizard.Hobbies)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span><strong>@h.Name</strong>@(string.IsNullOrWhiteSpace(h.Description) ? "" : $" — {h.Description}")</span>
+                <button class="btn btn-sm btn-outline-danger" @onclick="() => Wizard.RemoveHobby(h.Id)">✕</button>
+            </li>
+        }
+    </ul>
+}
+
+<div class="d-flex gap-2" style="max-width: 600px;">
+    <button class="btn btn-primary" @onclick="Validate" disabled="@(Wizard.Hobbies.Count == 0)">Validate</button>
+</div>
+@if (_showError)
+{
+    <div class="text-danger mt-2 small">Add at least one hobby to validate this step.</div>
+}
+
+@code {
+    [CascadingParameter] public WizardLayout Wizard { get; set; } = default!;
+
+    private string _name = string.Empty;
+    private string _desc = string.Empty;
+    private bool   _showError;
+
+    private void Add()
+    {
+        if (string.IsNullOrWhiteSpace(_name)) return;
+        Wizard.AddHobby(new Hobby { Id = Guid.NewGuid(), Name = _name, Description = _desc });
+        _name = string.Empty;
+        _desc = string.Empty;
+    }
+
+    private void Validate()
+    {
+        bool ok = Wizard.ValidateHobbies();
+        _showError = !ok;
+    }
+}

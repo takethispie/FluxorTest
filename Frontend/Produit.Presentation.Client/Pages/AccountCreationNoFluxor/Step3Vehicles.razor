@@ -1,0 +1,92 @@
+@page "/no-fluxor/step3"
+@layout WizardLayout
+@using Produit.Presentation.Client.Models
+@using Produit.Presentation.Client.Pages.AccountCreationNoFluxor
+
+<PageTitle>Account Creation (No Fluxor) – Step 3</PageTitle>
+<h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
+<AccountCreationBreadcrumb CurrentStep="3"
+    Step1Valid="Wizard.Step1Valid"
+    Step2Valid="Wizard.Step2Valid"
+    Step3Valid="Wizard.Step3Valid" />
+
+<div class="card mb-4" style="max-width: 640px;">
+    <div class="card-body">
+        <h5 class="card-title">Add a Vehicle</h5>
+        <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+                <label class="form-label">Make *</label>
+                <input class="form-control" @bind="_make" placeholder="e.g. Toyota" />
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Model *</label>
+                <input class="form-control" @bind="_model" placeholder="e.g. Corolla" />
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">Year</label>
+                <input type="number" class="form-control" @bind="_year" min="1900" max="@DateTime.Today.Year" />
+            </div>
+            <div class="col-sm-6">
+                <label class="form-label">License Plate</label>
+                <input class="form-control" @bind="_plate" placeholder="e.g. AB-123-CD" />
+            </div>
+        </div>
+        <button class="btn btn-success"
+                @onclick="Add"
+                disabled="@(string.IsNullOrWhiteSpace(_make) || string.IsNullOrWhiteSpace(_model))">
+            + Add
+        </button>
+    </div>
+</div>
+
+@if (Wizard.Vehicles.Count > 0)
+{
+    <ul class="list-group mb-4" style="max-width: 640px;">
+        @foreach (var v in Wizard.Vehicles)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>
+                    <strong>@v.Year @v.Make @v.Model</strong>
+                    @if (!string.IsNullOrWhiteSpace(v.LicensePlate))
+                    { <span class="badge bg-secondary ms-2">@v.LicensePlate</span> }
+                </span>
+                <button class="btn btn-sm btn-outline-danger" @onclick="() => Wizard.RemoveVehicle(v.Id)">✕</button>
+            </li>
+        }
+    </ul>
+}
+
+<div class="d-flex gap-2 mb-3" style="max-width: 640px;">
+    <button class="btn btn-primary" @onclick="Validate" disabled="@(Wizard.Vehicles.Count == 0)">Validate</button>
+    <a href="/no-fluxor/step4" class="btn btn-outline-primary ms-auto">Next: Summary →</a>
+</div>
+@if (_showError)
+{
+    <div class="text-danger mt-2 small">Add at least one vehicle to validate this step.</div>
+}
+
+@code {
+    [CascadingParameter] public WizardLayout Wizard { get; set; } = default!;
+
+    private string _make  = string.Empty;
+    private string _model = string.Empty;
+    private int    _year  = DateTime.Today.Year;
+    private string _plate = string.Empty;
+    private bool   _showError;
+
+    private void Add()
+    {
+        if (string.IsNullOrWhiteSpace(_make) || string.IsNullOrWhiteSpace(_model)) return;
+        Wizard.AddVehicle(new Vehicle { Id = Guid.NewGuid(), Make = _make, Model = _model, Year = _year, LicensePlate = _plate });
+        _make = string.Empty;
+        _model = string.Empty;
+        _year = DateTime.Today.Year;
+        _plate = string.Empty;
+    }
+
+    private void Validate()
+    {
+        bool ok = Wizard.ValidateVehicles();
+        _showError = !ok;
+    }
+}
