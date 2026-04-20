@@ -3,20 +3,25 @@ using Domain.OffresCommerciales.ValueObjects;
 
 namespace Domain.OffresCommerciales;
 
-public class OffreCommercialeBrouillon(Guid id, string libelle, string description, List<IProduit> produits) : IOffreCommerciale {
-    public Guid Id { get; private set; } = id;
-    public string Libelle { get; private set; } = libelle;
-    public string Description { get; private set; } = description;
-    public List<IProduit> Produits { get; private set; } = produits;
+public class OffreCommercialeBrouillon : IOffreCommerciale {
+    public Guid Id { get; private set; }
+    public string Libelle { get; private set; }
+    public string Description { get; private set; }
+    public List<IProduit> Produits { get; private set; }
 
+    public OffreCommercialeBrouillon(Guid id, string libelle, string description, List<IProduit> produits) {
+        Id = id;
+        Libelle = libelle;
+        Description = description;
+        Produits = produits;
+    }
+    
     public IOffreCommerciale Validate() => this switch {
         {
-            Libelle: not null and not "", 
-            Libelle.Length: < 1000, 
-            Description: not null and not "",
-            Description.Length: < 80,
+            Libelle.Length: > 0 and <= 1000, 
+            Description.Length: > 0 and <= 100,
             Produits.Count: > 0
-        } => new OffreCommercialeValide(Id, new Libelle(Libelle), new Description(Description)),
+        } => new OffreCommercialeValide(Id, new Libelle(Libelle), new Description(Description), Produits),
         _ => this
     };
 }
