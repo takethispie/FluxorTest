@@ -1,14 +1,25 @@
-@inherits LayoutComponentBase
-@inject NavigationManager Nav
 @inject FakeAccountDatabase Db
 @using Produit.Presentation.Client.Models
 @using Produit.Presentation.Client.Services
 
-<CascadingValue Value="this">
-    @Body
-</CascadingValue>
+<PageTitle>Account Creation (No Fluxor) – Step @_currentStep</PageTitle>
+<h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
+<AccountCreationBreadcrumb CurrentStep="_currentStep"
+    Step1Valid="Step1Valid"
+    Step2Valid="Step2Valid"
+    Step3Valid="Step3Valid" />
+
+@switch (_currentStep)
+{
+    case 1: <Produit.Presentation.Client.Pages.AccountCreationNoFluxor.Step1UserInfo Wizard="this" /> break;
+    case 2: <Produit.Presentation.Client.Pages.AccountCreationNoFluxor.Step2Hobbies Wizard="this" /> break;
+    case 3: <Produit.Presentation.Client.Pages.AccountCreationNoFluxor.Step3Vehicles Wizard="this" /> break;
+    case 4: <Produit.Presentation.Client.Pages.AccountCreationNoFluxor.Step4Summary Wizard="this" /> break;
+}
 
 @code {
+    private int _currentStep = 1;
+
     // ── Wizard state ─────────────────────────────────────────────────────────
     public Guid Id { get; private set; } = Guid.NewGuid();
     public UserInfo UserInfo { get; private set; } = new();
@@ -32,8 +43,8 @@
         Step1Valid = !string.IsNullOrWhiteSpace(firstName)
                   && !string.IsNullOrWhiteSpace(lastName)
                   && !string.IsNullOrWhiteSpace(email);
+        if (Step1Valid) _currentStep = 2;
         StateHasChanged();
-        if (Step1Valid) Nav.NavigateTo("/no-fluxor/step2");
         return Step1Valid;
     }
 
@@ -53,8 +64,8 @@
     public bool ValidateHobbies()
     {
         Step2Valid = Hobbies.Count > 0;
+        if (Step2Valid) _currentStep = 3;
         StateHasChanged();
-        if (Step2Valid) Nav.NavigateTo("/no-fluxor/step3");
         return Step2Valid;
     }
 
@@ -74,6 +85,7 @@
     public bool ValidateVehicles()
     {
         Step3Valid = Vehicles.Count > 0;
+        if (Step3Valid) _currentStep = 4;
         StateHasChanged();
         return Step3Valid;
     }
@@ -102,7 +114,7 @@
         Step2Valid = false;
         Step3Valid = false;
         IsSubmitted = false;
+        _currentStep = 1;
         StateHasChanged();
-        Nav.NavigateTo("/no-fluxor/step1");
     }
 }

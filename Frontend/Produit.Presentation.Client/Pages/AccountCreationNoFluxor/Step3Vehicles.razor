@@ -1,14 +1,4 @@
-@page "/no-fluxor/step3"
-@layout WizardLayout
 @using Produit.Presentation.Client.Models
-@using Produit.Presentation.Client.Pages.AccountCreationNoFluxor
-
-<PageTitle>Account Creation (No Fluxor) – Step 3</PageTitle>
-<h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
-<AccountCreationBreadcrumb CurrentStep="3"
-    Step1Valid="Wizard.Step1Valid"
-    Step2Valid="Wizard.Step2Valid"
-    Step3Valid="Wizard.Step3Valid" />
 
 <div class="card mb-4" style="max-width: 640px;">
     <div class="card-body">
@@ -58,7 +48,6 @@
 
 <div class="d-flex gap-2 mb-3" style="max-width: 640px;">
     <button class="btn btn-primary" @onclick="Validate" disabled="@(Wizard.Vehicles.Count == 0)">Validate</button>
-    <a href="/no-fluxor/step4" class="btn btn-outline-primary ms-auto">Next: Summary →</a>
 </div>
 @if (_showError)
 {
@@ -66,7 +55,7 @@
 }
 
 @code {
-    [CascadingParameter] public WizardLayout Wizard { get; set; } = default!;
+    [Parameter, EditorRequired] public WizardLayout Wizard { get; set; } = default!;
 
     private string _make  = string.Empty;
     private string _model = string.Empty;

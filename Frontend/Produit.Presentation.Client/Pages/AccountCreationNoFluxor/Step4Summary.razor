@@ -1,14 +1,4 @@
-@page "/no-fluxor/step4"
-@layout WizardLayout
 @using Produit.Presentation.Client.Models
-@using Produit.Presentation.Client.Pages.AccountCreationNoFluxor
-
-<PageTitle>Account Creation (No Fluxor) – Step 4</PageTitle>
-<h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
-<AccountCreationBreadcrumb CurrentStep="4"
-    Step1Valid="Wizard.Step1Valid"
-    Step2Valid="Wizard.Step2Valid"
-    Step3Valid="Wizard.Step3Valid" />
 
 @if (!Wizard.IsSubmitted)
 {
@@ -110,7 +100,7 @@ else
 }
 
 @code {
-    [CascadingParameter] public WizardLayout Wizard { get; set; } = default!;
+    [Parameter, EditorRequired] public WizardLayout Wizard { get; set; } = default!;
 
     private bool AllValid => Wizard.Step1Valid && Wizard.Step2Valid && Wizard.Step3Valid;
 }
