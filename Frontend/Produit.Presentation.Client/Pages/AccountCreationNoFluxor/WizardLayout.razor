@@ -3,7 +3,14 @@
 @using Produit.Presentation.Client.Services
 
 <PageTitle>Account Creation (No Fluxor) – Step @_currentStep</PageTitle>
-<h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
+@if (OnSaved.HasDelegate)
+{
+    <h2 class="mb-1">@(AccountToLoad is null ? "Create" : "Edit") Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
+}
+else
+{
+    <h2 class="mb-1">Create Account <small class="text-muted fs-6">(No Fluxor)</small></h2>
+}
 <AccountCreationBreadcrumb CurrentStep="_currentStep"
     Step1Valid="Step1Valid"
     Step2Valid="Step2Valid"
@@ -18,6 +25,9 @@
 }
 
 @code {
+    [Parameter] public UserAccountModel? AccountToLoad { get; set; }
+    [Parameter] public EventCallback OnSaved { get; set; }
+
     private int _currentStep = 1;
 
     // ── Wizard state ─────────────────────────────────────────────────────────
@@ -30,6 +40,21 @@
     public bool Step2Valid { get; private set; }
     public bool Step3Valid { get; private set; }
     public bool IsSubmitted { get; private set; }
+
+    protected override void OnParametersSet()
+    {
+        if (AccountToLoad is not null)
+        {
+            Id = AccountToLoad.Id;
+            UserInfo = AccountToLoad.UserInfo;
+            Hobbies = [.. AccountToLoad.Hobbies];
+            Vehicles = [.. AccountToLoad.Vehicles];
+            Step1Valid = true;
+            Step2Valid = Hobbies.Count > 0;
+            Step3Valid = Vehicles.Count > 0;
+            _currentStep = 1;
+        }
+    }
 
     // ── Step 1 ───────────────────────────────────────────────────────────────
     public void SaveUserInfo(UserInfo info)
@@ -102,6 +127,8 @@
         });
         IsSubmitted = true;
         StateHasChanged();
+        if (OnSaved.HasDelegate)
+            OnSaved.InvokeAsync();
     }
 
     public void Reset()
