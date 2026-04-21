@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Produit.Presentation.Shared
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Backend\Domain\Domain.csproj", "{656F0081-9EBF-4FA5-B566-BD1E07C7F93F}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FunctionnalDomain", "FunctionnalDomain\FunctionnalDomain.fsproj", "{D55ABA68-C34D-4981-93C1-F384EF466933}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "FunctionalDomain", "FunctionalDomain\FunctionalDomain.fsproj", "{D55ABA68-C34D-4981-93C1-F384EF466933}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
