@@ -1,32 +1,26 @@
 using Domain.OffresCommerciales.Entities.Garanties;
-using Domain.OffresCommerciales.Enums;
 using Domain.OffresCommerciales.Interfaces;
 using Domain.OffresCommerciales.ValueObjects;
 
 namespace Domain.OffresCommerciales.Entities.Produits;
 
-public class ProduitEnGestion : IProduit {
+public class ProduitEnGestion<TGarantie> : IProduit<TGarantie>
+    where TGarantie : IGarantie
+{
     public int Id { get; init; }
-    public Description Description { get; init; }
     public Libelle Libelle { get; init; }
-    public IEnumerable<RegroupementGaranties> RegroupementsGaranties { get; }
-    public TypeRisque Type { get; }
+    public Description Description { get; init; }
+    public IEnumerable<RegroupementGaranties<TGarantie>> RegroupementsGaranties { get; }
 
     public ProduitEnGestion(
-        int id, 
-        Libelle libelle, 
-        Description description, 
-        List<RegroupementGaranties> regroupementsGaranties,
-        TypeRisque type
+        int id,
+        Libelle libelle,
+        Description description,
+        List<RegroupementGaranties<TGarantie>> regroupementsGaranties
     ) {
         Id = id;
-        Type = type;
-        Description = description;
         Libelle = libelle;
+        Description = description;
         RegroupementsGaranties = regroupementsGaranties;
-    }
-    
-    public void AjouterGarantie(IGarantie garantie) {
-        
     }
 }

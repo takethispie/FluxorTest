@@ -1,13 +1,18 @@
 using Domain.OffresCommerciales.Entities.Garanties;
-using Domain.OffresCommerciales.Entities.Produits;
-using Domain.OffresCommerciales.Enums;
 
 namespace Domain.OffresCommerciales.Interfaces;
 
-public interface IProduit {
+/// <summary>Non-generic base — allows heterogeneous produit collections in OffreCommerciale.</summary>
+public interface IProduit
+{
     int Id { get; }
-    IEnumerable<RegroupementGaranties> RegroupementsGaranties { get; }
-    TypeRisque Type { get; }
+}
 
-    void AjouterGarantie(IGarantie garantie);
+/// <summary>
+/// Generic produit — TGarantie constrains which regroupements are allowed,
+/// making it impossible to add Prevoyance regroupements to a Sante produit and vice-versa.
+/// </summary>
+public interface IProduit<TGarantie> : IProduit where TGarantie : IGarantie
+{
+    IEnumerable<RegroupementGaranties<TGarantie>> RegroupementsGaranties { get; }
 }
