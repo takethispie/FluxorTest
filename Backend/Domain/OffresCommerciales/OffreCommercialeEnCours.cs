@@ -3,15 +3,16 @@ using Domain.OffresCommerciales.ValueObjects;
 
 namespace Domain.OffresCommerciales;
 
-public class OffreCommercialeBrouillon : IOffreCommerciale
+public class OffreCommercialeEnCours : IOffreCommerciale
 {
     public Guid Id { get; private set; }
     public string Libelle { get; private set; }
     public string Description { get; private set; }
     public IEnumerable<IProduit> Produits { get; private set; }
 
-    public OffreCommercialeBrouillon(Guid id, string libelle, string description, List<IProduit> produits)
+    public OffreCommercialeEnCours(Guid id, string libelle, string description, List<IProduit> produits)
     {
+        if (id == Guid.Empty) throw new ArgumentException("Id cannot be an empty GUID");
         Id = id;
         Libelle = libelle;
         Description = description;

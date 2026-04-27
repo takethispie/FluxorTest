@@ -2,7 +2,7 @@
 
 open System
 
-module Offre =
+module OffresCommerciale =
 
     type PrestationDetail = { Id: Guid; Libelle: string; Description: string }
     
@@ -24,4 +24,4 @@ module Offre =
         
     type OffreCommerciale =
         | Brouillon of Id: Guid * Libelle: string * Description: string
-        | Valide of Id: Guid * Libelle: string * Description: string 
+        | Valide of Id: Guid * Libelle: string * Description: string

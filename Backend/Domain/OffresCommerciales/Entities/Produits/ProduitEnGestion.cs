@@ -23,4 +23,6 @@ public class ProduitEnGestion<TGarantie> : IProduit<TGarantie>
         Description = description;
         RegroupementsGaranties = regroupementsGaranties;
     }
+
+    public bool EstValide() => true;
 }

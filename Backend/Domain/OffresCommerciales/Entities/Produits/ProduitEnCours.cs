@@ -4,7 +4,7 @@ using Domain.OffresCommerciales.ValueObjects;
 
 namespace Domain.OffresCommerciales.Entities.Produits;
 
-public class ProduitBrouillon<TRisque> : IProduit<TRisque>
+public class ProduitEnCours<TRisque> : IProduit<TRisque>
     where TRisque : IGarantie
 {
     public int Id { get; init; }
@@ -12,7 +12,7 @@ public class ProduitBrouillon<TRisque> : IProduit<TRisque>
     public string Description { get; private set; }
     public IEnumerable<RegroupementGaranties<TRisque>> RegroupementsGaranties { get; private set; }
 
-    public ProduitBrouillon(
+    public ProduitEnCours(
         int id,
         string libelle,
         string description,
@@ -24,13 +24,15 @@ public class ProduitBrouillon<TRisque> : IProduit<TRisque>
         RegroupementsGaranties = regroupementsGaranties;
     }
 
-    public IProduit<TRisque> Validate() => this switch {
+    public bool EstValide() => false;
+
+    public IProduit<TRisque> Valider() => this switch {
         {
             Libelle: not null and not "",
             Libelle.Length: <= 100,
             Description: not null and not "",
             Description.Length: <= 1000
-        } => new ProduitEnAttente<TRisque>(Id, new Libelle(Libelle), new Description(Description), RegroupementsGaranties),
+        } => new ProduitValide<TRisque>(Id, new Libelle(Libelle), new Description(Description), RegroupementsGaranties),
         _ => this
     };
 }
