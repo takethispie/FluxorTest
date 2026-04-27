@@ -27,6 +27,7 @@ public class ProduitValide<TRisque> : IProduit<TRisque>
 
     public bool EstValide() {
         var valide = false;
+
         return valide;
     }
 }

@@ -9,14 +9,24 @@ public class OffreCommercialeEnCours : IOffreCommerciale
     public string Libelle { get; private set; }
     public string Description { get; private set; }
     public IEnumerable<IProduit> Produits { get; private set; }
+    public IEnumerable<IGarantie> Garanties { get; private set; }
+    public IEnumerable<IPopulation> Populations { get; private set; }
 
-    public OffreCommercialeEnCours(Guid id, string libelle, string description, List<IProduit> produits)
+    public OffreCommercialeEnCours(
+        Guid id,
+        string libelle,
+        string description,
+        List<IProduit> produits,
+        List<IGarantie> garanties,
+        List<IPopulation> populations)
     {
         if (id == Guid.Empty) throw new ArgumentException("Id cannot be an empty GUID");
         Id = id;
         Libelle = libelle;
         Description = description;
         Produits = produits;
+        Garanties = garanties;
+        Populations = populations;
     }
 
     public IOffreCommerciale Validate() => this switch
@@ -28,7 +38,9 @@ public class OffreCommercialeEnCours : IOffreCommerciale
             Id,
             new Libelle(Libelle),
             new Description(Description),
-            Produits.ToList()
+            [..Produits],
+            [..Garanties],
+            [..Populations]
         ),
         _ => this
     };

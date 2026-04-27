@@ -1,3 +1,6 @@
 namespace Domain.OffresCommerciales.Interfaces;
 
-public interface IPopulation;
+public interface IPopulation
+{
+    Guid Id { get; }
+}
