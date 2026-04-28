@@ -34,7 +34,7 @@ public class OffreCommercialeEnCours : IOffreCommerciale
         {
             Libelle.Length: > 0 and <= 1000,
             Description.Length: > 0 and <= 100,
-        } when Produits.Any() => new OffreCommercialeValide(
+        } when Id != Guid.Empty &&  Produits.Any() => new OffreCommercialeValide(
             Id,
             new Libelle(Libelle),
             new Description(Description),

@@ -1,10 +1,12 @@
+using Domain.OffresCommerciales.ValueObjects;
+
 namespace Domain.OffresCommerciales.Interfaces;
 
 public interface IGarantie
 {
     int Id { get; }
-    string Libelle { get; }
-    string Description { get; }
+    Libelle Libelle { get; }
+    Description Description { get; }
 }
 
 public interface IGarantieSante : IGarantie;

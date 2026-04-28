@@ -18,6 +18,7 @@ public class ProduitEnCours<TRisque> : IProduit<TRisque>
         string description,
         List<RegroupementGaranties<TRisque>> regroupementsGaranties
     ) {
+        ArgumentOutOfRangeException.ThrowIfNegative(id);
         Id = id;
         Libelle = libelle;
         Description = description;
