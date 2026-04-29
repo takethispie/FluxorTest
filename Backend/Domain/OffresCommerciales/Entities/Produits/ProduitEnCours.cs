@@ -10,19 +10,19 @@ public class ProduitEnCours<TRisque> : IProduit<TRisque>
     public int Id { get; init; }
     public string Libelle { get; private set; }
     public string Description { get; private set; }
-    public IEnumerable<RegroupementGaranties<TRisque>> RegroupementsGaranties { get; private set; }
+    public IEnumerable<TRisque> Garanties { get; private set; }
 
     public ProduitEnCours(
         int id,
         string libelle,
         string description,
-        List<RegroupementGaranties<TRisque>> regroupementsGaranties
+        List<TRisque> regroupementsGaranties
     ) {
         ArgumentOutOfRangeException.ThrowIfNegative(id);
         Id = id;
         Libelle = libelle;
         Description = description;
-        RegroupementsGaranties = regroupementsGaranties;
+        Garanties = regroupementsGaranties;
     }
 
     public bool EstValide() => false;
@@ -33,7 +33,7 @@ public class ProduitEnCours<TRisque> : IProduit<TRisque>
             Libelle.Length: <= 100,
             Description: not null and not "",
             Description.Length: <= 1000
-        } => new ProduitValide<TRisque>(Id, new Libelle(Libelle), new Description(Description), RegroupementsGaranties),
+        } => new ProduitValide<TRisque>(Id, new Libelle(Libelle), new Description(Description), Garanties),
         _ => this
     };
 }

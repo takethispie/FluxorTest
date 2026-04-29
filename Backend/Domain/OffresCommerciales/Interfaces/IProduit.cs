@@ -10,5 +10,5 @@ public interface IProduit
 
 public interface IProduit<TGarantie> : IProduit where TGarantie : IGarantie
 {
-    IEnumerable<RegroupementGaranties<TGarantie>> RegroupementsGaranties { get; }
+    IEnumerable<TGarantie> Garanties { get; }
 }

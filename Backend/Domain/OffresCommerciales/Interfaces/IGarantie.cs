@@ -4,7 +4,7 @@ namespace Domain.OffresCommerciales.Interfaces;
 
 public interface IGarantie
 {
-    int Id { get; }
+    Guid Id { get; }
     Libelle Libelle { get; }
     Description Description { get; }
 }

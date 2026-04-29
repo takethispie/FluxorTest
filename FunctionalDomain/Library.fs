@@ -16,11 +16,15 @@ module OffresCommerciale =
 
     type GarantiePrevoyance = { Id: int; Libelle: string; Description: string }
     
-    type RegroupementGaranties<'risque> = RegroupementGaranties of Garanties: 'risque[]
+
+    type Garanties =
+        | Sante of GarantieSante[]
+        | Prevoyance of GarantiePrevoyance[]
+        | Regroupement of Garanties[]
     
     type Produit =
-        | Sante of Id: int * RegroupementGaranties: RegroupementGaranties<GarantieSante>[]
-        | Prevoyance of Id: int * RegroupementGaranties: RegroupementGaranties<GarantiePrevoyance>[]
+        | Sante of Id: int * Garanties: Garanties[]
+        | Prevoyance of Id: int * Garanties: Garanties[]
         
     type OffreCommerciale =
         | Brouillon of Id: Guid * Libelle: string * Description: string

@@ -5,12 +5,13 @@ namespace Domain.OffresCommerciales.Entities.Garanties;
 
 public abstract class GarantieSante : IGarantieSante
 {
-    public int Id { get; init; }
+    public Guid Id { get; init; }
     public Libelle Libelle { get; init; }
     public Description Description { get; init; }
 
-    protected GarantieSante(int id, Libelle libelle, Description description)
+    protected GarantieSante(Guid id, Libelle libelle, Description description)
     {
+        if(id == Guid.Empty) throw new ArgumentException("Id should not be empty GUID");
         Id = id;
         Libelle = libelle;
         Description = description;
