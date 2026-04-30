@@ -14,7 +14,7 @@ public class Tests
     [Test]
     public void Test1()
     {
-        var test = new RegroupementGaranties<GarantiePrevoyance>(
+        var test = new RegroupementGaranties<GarantieSante>(
             [],
             Guid.NewGuid(),
             new Libelle("tets"),

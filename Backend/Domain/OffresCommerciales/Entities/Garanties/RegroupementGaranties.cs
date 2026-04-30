@@ -15,8 +15,11 @@ public class RegroupementGaranties<TRisque> : IGarantie where TRisque : IGaranti
 
     public RegroupementGaranties(IEnumerable<TRisque> garanties, Guid id, Libelle libelle, Description description)
     {
-        var ty = typeof(TRisque);
-        if (typeof(TRisque) != typeof(IGarantiePrevoyance) && typeof(TRisque) != typeof(IGarantieSante)) throw new Exception("missing subtyping");
+        if (!typeof(IGarantiePrevoyance).IsAssignableFrom(typeof(TRisque)) &&
+            !typeof(IGarantieSante).IsAssignableFrom(typeof(TRisque)))
+        {
+            throw new Exception("missing subtyping");
+        }
         if(id == Guid.Empty) throw new ArgumentException("Id should not be empty GUID");
         Garanties = garanties;
         Id = id;
